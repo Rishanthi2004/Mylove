@@ -387,10 +387,10 @@ export const CuteDogsSection: React.FC = () => {
         {hasAnsweredYes ? (
           <div className="animate-fade-in py-1">
             <h3 className="font-display text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-200 via-pink-200 to-purple-100 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(216,180,254,0.9)]">
-              Yay! I knew it! 💜🐶
+              I love you too! 💜🥺
             </h3>
-            <p className="text-xs text-purple-300/80 font-sans mt-1">
-              You're my forever favourite person in the whole universe ✨
+            <p className="text-xs text-purple-300/90 font-sans mt-1">
+              Yay! I knew it! Forever and always, my darling ✨
             </p>
           </div>
         ) : (

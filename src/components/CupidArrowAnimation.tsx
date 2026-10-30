@@ -120,8 +120,8 @@ export const CupidArrowAnimation: React.FC = () => {
 
   return (
     <>
-      {/* Floating Cupid Launcher Trigger Button */}
-      <div className="fixed bottom-5 right-5 z-40">
+      {/* Floating Cupid Launcher Trigger Button on the Left */}
+      <div className="fixed bottom-5 left-5 z-40">
         <button
           onClick={triggerAnimation}
           disabled={stage !== 'idle'}

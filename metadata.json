@@ -1,0 +1,6 @@
+{
+  "name": "Our Beautiful Love Story",
+  "description": "An emotional, interactive, mobile-first love storybook featuring a glowing heartbeat entrance, memory chapters, and personal moments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

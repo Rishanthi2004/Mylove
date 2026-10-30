@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { MemoryChapter } from '../types';
-import { BookOpen, Images, Sparkles, Volume2, VolumeX, RotateCcw } from 'lucide-react';
-import { romanticAudio } from '../utils/audio';
+import { BookOpen, Images, Sparkles, RotateCcw } from 'lucide-react';
 import { CuteDogsSection } from './CuteDogsSection';
 import { SecretLoveLetter } from './SecretLoveLetter';
+import { OurSongSection } from './OurSongSection';
 
 interface StoryHubProps {
   memories: MemoryChapter[];
@@ -18,12 +18,6 @@ export const StoryHub: React.FC<StoryHubProps> = ({
   onOpenGallery,
   onResetHeart,
 }) => {
-  const [isAudioPlaying, setIsAudioPlaying] = useState(true);
-
-  const toggleAudio = () => {
-    const active = romanticAudio.toggle();
-    setIsAudioPlaying(active);
-  };
 
   return (
     <div className="relative min-h-[100dvh] w-full bg-[#08020e] text-slate-100 flex flex-col justify-between overflow-x-hidden pb-10 selection:bg-purple-900">
@@ -51,25 +45,9 @@ export const StoryHub: React.FC<StoryHubProps> = ({
           <span>Heartbeat</span>
         </button>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggleAudio}
-            className="flex items-center gap-1 text-xs text-purple-200 bg-purple-950/50 border border-purple-500/30 px-3 py-1.5 rounded-full backdrop-blur-md active:scale-95 transition-transform"
-            aria-label="Toggle ambient music"
-          >
-            {isAudioPlaying ? (
-              <>
-                <Volume2 className="w-3.5 h-3.5 text-purple-300 animate-pulse" />
-                <span className="text-[11px] font-medium text-purple-200">Music</span>
-              </>
-            ) : (
-              <>
-                <VolumeX className="w-3.5 h-3.5 text-purple-400/60" />
-                <span className="text-[11px] text-purple-400/60">Muted</span>
-              </>
-            )}
-          </button>
-        </div>
+        <span className="text-xs text-purple-400/60 font-script text-base">
+          Forever Yours 💜
+        </span>
       </header>
 
       {/* Main Content Area */}
@@ -132,6 +110,9 @@ export const StoryHub: React.FC<StoryHubProps> = ({
 
         {/* Cute Couple Section 💜 */}
         <CuteDogsSection />
+
+        {/* Our Special Song Section 🎵 */}
+        <OurSongSection />
 
         {/* Secret Love Letter For Rahman (Password: 1420) 💌 */}
         <SecretLoveLetter />

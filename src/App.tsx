@@ -4,6 +4,7 @@ import { OpeningHeart } from './components/OpeningHeart';
 import { StoryHub } from './components/StoryHub';
 import { MemoryJourney } from './components/MemoryJourney';
 import { MemoriesGallery } from './components/MemoriesGallery';
+import { CupidArrowAnimation } from './components/CupidArrowAnimation';
 import {
   INITIAL_MEMORIES,
   loadStoryCustomizations,
@@ -138,6 +139,9 @@ export default function App() {
           />
         </div>
       )}
+
+      {/* Cupid's Arrow & Heart Burst Animation 🏹💘 */}
+      {screen !== 'heartbeat' && <CupidArrowAnimation />}
     </div>
   );
 }

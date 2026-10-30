@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { romanticAudio } from '../utils/audio';
 
 interface OpeningHeartProps {
   onOpen: () => void;
@@ -121,13 +120,6 @@ export const OpeningHeart: React.FC<OpeningHeartProps> = ({ onOpen }) => {
   const handleTouch = (e: React.MouseEvent | React.TouchEvent) => {
     if (isOpening) return;
     setIsOpening(true);
-
-    // Audio init & play
-    try {
-      romanticAudio.play();
-    } catch {
-      // Audio autoplay policy fallback
-    }
 
     // Get touch or click coordinates
     let clientX = window.innerWidth / 2;

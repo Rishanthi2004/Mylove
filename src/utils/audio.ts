@@ -1,81 +1,88 @@
-// Romantic ambient audio generator using Web Audio API
+import songAssetUrl from '../assets/something_song.mp3';
+
+// Romantic audio engine with default "Something Something" movie track
+export const DEFAULT_SONG_URL = songAssetUrl;
+
 class RomanticAudio {
-  private ctx: AudioContext | null = null;
+  private audioElement: HTMLAudioElement | null = null;
   private isPlaying = false;
-  private timer: number | null = null;
-  private masterGain: GainNode | null = null;
+  private customTrackUrl: string = songAssetUrl;
+  private listeners: Set<() => void> = new Set();
 
-  private notes = [
-    261.63, // C4
-    329.63, // E4
-    392.00, // G4
-    493.88, // B4
-    523.25, // C5
-    587.33, // D5
-    659.25, // E5
-  ];
+  constructor() {
+    this.setupAudio(this.customTrackUrl);
+  }
 
-  public init() {
-    if (!this.ctx) {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (AudioCtx) {
-        this.ctx = new AudioCtx();
-        this.masterGain = this.ctx.createGain();
-        this.masterGain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-        this.masterGain.connect(this.ctx.destination);
-      }
+  private setupAudio(url: string) {
+    if (typeof window === 'undefined') return;
+
+    if (this.audioElement) {
+      this.audioElement.pause();
+      this.audioElement.src = '';
     }
-    if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume();
+
+    this.audioElement = new Audio(url);
+    this.audioElement.loop = true;
+    this.audioElement.volume = 0.85;
+
+    this.audioElement.addEventListener('play', () => {
+      this.isPlaying = true;
+      this.notify();
+    });
+
+    this.audioElement.addEventListener('pause', () => {
+      this.isPlaying = false;
+      this.notify();
+    });
+
+    this.audioElement.addEventListener('timeupdate', () => {
+      this.notify();
+    });
+
+    this.audioElement.addEventListener('ended', () => {
+      this.isPlaying = false;
+      this.notify();
+    });
+  }
+
+  public subscribe(cb: () => void) {
+    this.listeners.add(cb);
+    return () => {
+      this.listeners.delete(cb);
+    };
+  }
+
+  private notify() {
+    this.listeners.forEach((cb) => cb());
+  }
+
+  public setCustomTrack(url: string) {
+    const wasPlaying = this.isPlaying;
+    this.customTrackUrl = url;
+    this.setupAudio(url);
+    if (wasPlaying && this.audioElement) {
+      this.audioElement.play().catch(() => {});
     }
   }
 
-  public play() {
-    this.init();
-    if (!this.ctx || this.isPlaying) return;
-    this.isPlaying = true;
-    let step = 0;
-    const chords = [
-      [261.63, 329.63, 392.00, 523.25], // C major 7
-      [220.00, 261.63, 329.63, 440.00], // A minor
-      [174.61, 261.63, 329.63, 392.00], // F maj7
-      [196.00, 246.94, 293.66, 392.00], // G
-    ];
-
-    const playChime = () => {
-      if (!this.isPlaying || !this.ctx || !this.masterGain) return;
-      const currentChord = chords[Math.floor(step / 4) % chords.length];
-      const freq = currentChord[step % currentChord.length];
-
-      const osc = this.ctx.createOscillator();
-      const noteGain = this.ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-
-      noteGain.gain.setValueAtTime(0, this.ctx.currentTime);
-      noteGain.gain.linearRampToValueAtTime(0.08, this.ctx.currentTime + 0.12);
-      noteGain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 2.2);
-
-      osc.connect(noteGain);
-      noteGain.connect(this.masterGain);
-
-      osc.start();
-      osc.stop(this.ctx.currentTime + 2.3);
-
-      step++;
-      const nextDelay = (step % 4 === 0 ? 1200 : 650) + Math.random() * 200;
-      this.timer = window.setTimeout(playChime, nextDelay);
-    };
-
-    playChime();
+  public play(): Promise<void> {
+    if (!this.audioElement) {
+      this.setupAudio(this.customTrackUrl);
+    }
+    if (this.audioElement) {
+      this.isPlaying = true;
+      return this.audioElement.play().catch((err) => {
+        console.warn('Audio play error:', err);
+      });
+    }
+    return Promise.resolve();
   }
 
   public pause() {
-    this.isPlaying = false;
-    if (this.timer) {
-      clearTimeout(this.timer);
-      this.timer = null;
+    if (this.audioElement) {
+      this.audioElement.pause();
+      this.isPlaying = false;
+      this.notify();
     }
   }
 
@@ -91,6 +98,24 @@ class RomanticAudio {
 
   public getStatus(): boolean {
     return this.isPlaying;
+  }
+
+  public getCurrentTime(): number {
+    return this.audioElement?.currentTime || 0;
+  }
+
+  public getDuration(): number {
+    return this.audioElement?.duration || 0;
+  }
+
+  public seek(time: number) {
+    if (this.audioElement && Number.isFinite(time)) {
+      this.audioElement.currentTime = time;
+    }
+  }
+
+  public getAudioElement(): HTMLAudioElement | null {
+    return this.audioElement;
   }
 }
 
